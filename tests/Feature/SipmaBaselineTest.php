@@ -69,7 +69,15 @@ class SipmaBaselineTest extends TestCase
         $this->assertDatabaseCount('students', 100);
         $this->assertDatabaseCount('parents', 10);
         $this->assertDatabaseCount('activities', 5);
-        $this->assertDatabaseCount('model_has_roles', 122);
+        $this->assertDatabaseCount('model_has_roles', 123);
+        $this->assertSame("Muhammad Ara'af, S.Ag", User::where('email', 'murabbi@sipma.test')->value('name'));
+        $this->assertSame('Syahrul Ramdhani, S.Ag', User::where('email', 'murabbi2@sipma.test')->value('name'));
+        $this->assertSame('Riyan Hidayat', User::where('email', 'mudabbir1@sipma.test')->value('name'));
+        $this->assertSame('Ahmad Naufal Farhan', User::where('email', 'mudabbir6@sipma.test')->value('name'));
+        $this->assertStringContainsString('belum dikonfirmasi', User::where('email', 'mudabbir7@sipma.test')->value('name'));
+        foreach (User::where('role', UserRoleEnum::MAHASANTRI)->get() as $user) {
+            $this->assertDoesNotMatchRegularExpression('/(?:S|M)\.[A-Za-z.]+$/', $user->name);
+        }
         $this->assertTrue(User::where('email', 'admin@sipma.test')->first()->hasRole('super_admin'));
         $this->assertCount(2, Group::first()->mudabbirs);
         $this->assertCount(20, Group::first()->students);

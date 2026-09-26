@@ -41,7 +41,7 @@ class SipmaSeeder extends Seeder
 
             for ($i = 1; $i <= 20; $i++) {
                 $number = ($groupNumber - 1) * 20 + $i;
-                $user = $createUser(fake('id_ID')->name('male'), 'mahasantri'.$number.'@sipma.test', UserRoleEnum::MAHASANTRI);
+                $user = $createUser(fake('id_ID')->firstNameMale().' '.fake('id_ID')->lastNameMale(), 'mahasantri'.$number.'@sipma.test', UserRoleEnum::MAHASANTRI);
                 $student = Student::withTrashed()->firstOrCreate(['user_id' => $user->id], [
                     'user_id' => $user->id, 'group_id' => $group->id,
                     'nim' => '112601'.str_pad((string) $number, 6, '0', STR_PAD_LEFT),
@@ -62,5 +62,6 @@ class SipmaSeeder extends Seeder
         }
 
         ViolationCategory::firstOrCreate(['name' => 'Kedisiplinan'], ['description' => 'Kategori awal; sesuaikan dengan peraturan mabna.', 'points' => 1]);
+        $this->call(DemoIdentitySeeder::class);
     }
 }

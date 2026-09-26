@@ -54,13 +54,31 @@ Password demo: Sipma123! (development saja).
 | Role | Email |
 |---|---|
 | Super Admin | admin@sipma.test |
-| Murabbi | murabbi@sipma.test |
-| Ketua Mudabbir | mudabbir1@sipma.test |
-| Mudabbir | mudabbir2@sipma.test |
+| Murabbi — Muhammad Ara'af, S.Ag | murabbi@sipma.test |
+| Murabbi — Syahrul Ramdhani, S.Ag | murabbi2@sipma.test |
+| Ketua Mudabbir — Riyan Hidayat | mudabbir1@sipma.test |
+| Mudabbir — Syarif Hidayatullah | mudabbir2@sipma.test |
+| Mudabbir — Dandi Muchammad Mudzakir | mudabbir3@sipma.test |
+| Mudabbir — Muhammad Haqi An-Nazili | mudabbir4@sipma.test |
+| Mudabbir — Muhammad Najwan Cahyadi | mudabbir5@sipma.test |
+| Mudabbir — Ahmad Naufal Farhan | mudabbir6@sipma.test |
 | Mahasantri | mahasantri1@sipma.test |
 | Orang Tua | orangtua1@sipma.test |
 
-Seeder baru tetap membuat 122 akun, 5 kelompok, 100 mahasantri, dan 10 wali.
+Seeder membuat 123 akun, 5 kelompok, 100 mahasantri, dan 10 wali.
+Ada dua murabbi. Akun murabbi pertama mempertahankan penugasan baseline;
+murabbi kedua belum mendapat penugasan kelompok sampai pembagiannya dikonfirmasi.
+Mudabbir 7–10 memakai label belum dikonfirmasi. Nama dummy mahasantri tidak
+memakai gelar akademik. Untuk memperbarui identitas database baseline tanpa
+mereset password, UUID atau penugasan, jalankan:
+
+```powershell
+php artisan db:seed --class=DemoIdentitySeeder
+```
+
+Password akun baru demo tetap Sipma123!; pembaruan nama tidak mereset password
+akun yang sudah ada. Nama ini merupakan data yang diberikan pengguna; email
+@sipma.test tetap alamat demo lokal, bukan email personal yang telah dikonfirmasi.
 Mudabbir pertama dipromosikan, bukan ditambah. Seeder dapat diulang tanpa
 mereset password/profil lama. Promosi pada database lama memakai command demo
 atau perubahan role lewat admin. Satu role enum users.role disinkronkan ke

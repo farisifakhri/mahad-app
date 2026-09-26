@@ -415,7 +415,11 @@ class SipmaOperationsTest extends TestCase
         $this->seed(SipmaSeeder::class);
         $count = User::count();
         $password = User::where('email', 'admin@sipma.test')->value('password');
+        $student = User::where('email', 'mahasantri1@sipma.test')->firstOrFail();
+        $student->update(['name' => 'Drajat Cayadi Gunawan S.I.Kom']);
         $this->seed(SipmaSeeder::class);
+        $this->assertSame('Drajat Cayadi Gunawan', $student->fresh()->name);
+        $this->assertSame($student->id, User::where('email', 'mahasantri1@sipma.test')->value('id'));
         $this->assertSame($count, User::count());
         $this->assertSame($password, User::where('email', 'admin@sipma.test')->value('password'));
         $this->assertSame(2, User::where('email', 'mudabbir1@sipma.test')->first()->managedGroups->first()->mudabbirs()->count());
