@@ -20,15 +20,18 @@ class RolePermissionSeeder extends Seeder
             'attendances.view', 'attendances.record', 'submissions.view', 'submissions.review',
             'violations.view', 'violations.record', 'reports.view', 'parents.manage',
             'portal.self.view', 'portal.submissions.create', 'portal.children.view',
+            'sessions.view', 'sessions.open', 'attendances.correct', 'reports.finalize',
+            'corrections.review',
         ];
         foreach ($permissions as $name) {
             Permission::findOrCreate($name, 'web');
         }
-        $readPermissions = ['groups.view', 'students.view', 'activities.view', 'violation_categories.view', 'attendances.view', 'violations.view', 'reports.view'];
+        $readPermissions = ['groups.view', 'students.view', 'activities.view', 'violation_categories.view', 'attendances.view', 'violations.view', 'reports.view', 'sessions.view'];
         $map = [
-            UserRoleEnum::SUPER_ADMIN->value => $permissions,
-            UserRoleEnum::MURABBI->value => $readPermissions,
+            UserRoleEnum::SUPER_ADMIN->value => array_values(array_diff($permissions, ['sessions.open', 'attendances.record', 'attendances.correct', 'corrections.review'])),
+            UserRoleEnum::MURABBI->value => array_merge($readPermissions, ['sessions.open', 'reports.finalize', 'corrections.review']),
             UserRoleEnum::MUDABBIR->value => array_merge($readPermissions, ['attendances.record', 'submissions.view', 'submissions.review', 'violations.record']),
+            UserRoleEnum::KETUA_MUDABBIR->value => array_merge($readPermissions, ['attendances.record', 'submissions.view', 'submissions.review', 'violations.record', 'sessions.open', 'attendances.correct', 'reports.finalize']),
             UserRoleEnum::MAHASANTRI->value => ['portal.self.view', 'portal.submissions.create'],
             UserRoleEnum::ORANG_TUA->value => ['portal.children.view'],
         ];

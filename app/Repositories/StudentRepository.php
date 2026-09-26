@@ -16,7 +16,7 @@ class StudentRepository
         if ($user->hasRole('super_admin')) {
             return $query;
         }
-        if ($user->hasAnyRole(['murabbi', 'mudabbir'])) {
+        if ($user->hasAnyRole(['murabbi', 'mudabbir', 'ketua_mudabbir'])) {
             return $query->whereIn('group_id', $this->groups->visibleTo($user)->select('groups.id'));
         }
         if ($user->hasRole('mahasantri')) {

@@ -13,7 +13,7 @@ class HomeController extends Controller
         if (! $user) {
             return redirect()->route('login');
         }
-        if ($user->hasAnyRole(['super_admin', 'murabbi', 'mudabbir'])) {
+        if ($user->hasAnyRole(['super_admin', 'murabbi', 'mudabbir', 'ketua_mudabbir'])) {
             return redirect()->route('filament.admin.pages.dashboard');
         }
         if ($user->hasRole('mahasantri')) {

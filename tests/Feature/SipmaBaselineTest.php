@@ -77,7 +77,7 @@ class SipmaBaselineTest extends TestCase
 
     public function test_portal_login_redirects_roles_and_denies_cross_role_routes(): void
     {
-        foreach ([UserRoleEnum::SUPER_ADMIN, UserRoleEnum::MURABBI, UserRoleEnum::MUDABBIR, UserRoleEnum::MAHASANTRI, UserRoleEnum::ORANG_TUA] as $role) {
+        foreach (UserRoleEnum::cases() as $role) {
             $user = $this->user($role);
             $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect('/dashboard');
             $target = match ($role) {
@@ -89,8 +89,9 @@ class SipmaBaselineTest extends TestCase
             $this->post('/logout');
         }
         $student = $this->user(UserRoleEnum::MAHASANTRI);
-        $this->actingAs($student)->get('/portal/absensi')->assertOk();
-        $this->get('/portal/pengajuan')->assertOk();
+        $this->actingAs($student)->get('/portal/absensi')->assertRedirect(route('portal.onboarding'));
+        $this->get('/portal/pengajuan')->assertRedirect(route('portal.onboarding'));
+        $this->get('/portal/onboarding')->assertOk();
         $this->get('/portal/anak')->assertForbidden();
         $this->get('/admin')->assertForbidden();
         $parent = $this->user(UserRoleEnum::ORANG_TUA);
@@ -120,7 +121,8 @@ class SipmaBaselineTest extends TestCase
             $this->assertTrue(ActivityResource::canViewAny());
             $this->assertFalse(Gate::forUser($user)->allows('create', [Attendance::class, $otherStudent]));
         }
-        $this->assertTrue(Gate::forUser($mudabbir)->allows('create', [Attendance::class, $student]));
+        // A student without a target session is never sufficient authorization.
+        $this->assertFalse(Gate::forUser($mudabbir)->allows('create', [Attendance::class, $student]));
         $this->assertFalse(Gate::forUser($murabbi)->allows('create', [Attendance::class, $student]));
         $this->assertSame(1, $monitoring->students($mudabbir)->count());
         $admin = $this->user(UserRoleEnum::SUPER_ADMIN);
@@ -198,8 +200,9 @@ class SipmaBaselineTest extends TestCase
 
     public function test_registration_cannot_escalate_role_and_role_changes_sync(): void
     {
-        $this->post('/register', ['name' => 'External', 'email' => 'external@sipma.test', 'password' => 'password', 'password_confirmation' => 'password', 'role' => 'super_admin'])->assertRedirect('/dashboard');
-        $user = User::where('email', 'external@sipma.test')->firstOrFail();
+        $this->post('/register', ['name' => 'External', 'email' => 'external@sipma.test', 'password' => 'password', 'password_confirmation' => 'password', 'role' => 'super_admin'])->assertNotFound();
+        $this->assertDatabaseMissing('users', ['email' => 'external@sipma.test']);
+        $user = $this->user(UserRoleEnum::MAHASANTRI);
         $this->assertTrue($user->hasRole('mahasantri'));
         $this->assertFalse($user->hasRole('super_admin'));
         $user->update(['role' => UserRoleEnum::MUDABBIR]);

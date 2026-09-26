@@ -3,15 +3,21 @@
 namespace App\Providers;
 
 use App\Models\AbsenceSubmission;
+use App\Models\ActivitySession;
 use App\Models\Attendance;
+use App\Models\AttendanceCorrection;
 use App\Models\ParentModel;
 use App\Models\User;
 use App\Models\Violation;
+use App\Models\WeeklyPeriod;
 use App\Observers\UserObserver;
 use App\Policies\AbsenceSubmissionPolicy;
+use App\Policies\ActivitySessionPolicy;
+use App\Policies\AttendanceCorrectionPolicy;
 use App\Policies\AttendancePolicy;
 use App\Policies\ParentPolicy;
 use App\Policies\ViolationPolicy;
+use App\Policies\WeeklyPeriodPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,6 +37,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         User::observe(UserObserver::class);
+        Gate::policy(ActivitySession::class, ActivitySessionPolicy::class);
+        Gate::policy(WeeklyPeriod::class, WeeklyPeriodPolicy::class);
+        Gate::policy(AttendanceCorrection::class, AttendanceCorrectionPolicy::class);
         Gate::policy(Attendance::class, AttendancePolicy::class);
         Gate::policy(Violation::class, ViolationPolicy::class);
         Gate::policy(ParentModel::class, ParentPolicy::class);

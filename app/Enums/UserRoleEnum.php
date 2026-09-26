@@ -9,6 +9,7 @@ enum UserRoleEnum: string implements HasLabel
     case SUPER_ADMIN = 'super_admin';
     case MURABBI = 'murabbi';
     case MUDABBIR = 'mudabbir';
+    case KETUA_MUDABBIR = 'ketua_mudabbir';
     case MAHASANTRI = 'mahasantri';
     case ORANG_TUA = 'orang_tua';
 
@@ -18,6 +19,7 @@ enum UserRoleEnum: string implements HasLabel
             self::SUPER_ADMIN => 'Super Admin',
             self::MURABBI => 'Murabbi',
             self::MUDABBIR => 'Mudabbir',
+            self::KETUA_MUDABBIR => 'Ketua Mudabbir',
             self::MAHASANTRI => 'Mahasantri',
             self::ORANG_TUA => 'Orang Tua',
         };

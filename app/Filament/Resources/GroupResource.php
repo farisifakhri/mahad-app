@@ -35,7 +35,7 @@ class GroupResource extends InternalResource
             TextInput::make('academic_year')->label('Tahun akademik')->required()->regex('/^\d{4}\/\d{4}$/')->maxLength(9),
             Select::make('murabbi_id')->relationship('murabbi', 'name', fn (Builder $query) => $query->where('role', 'murabbi')
                 ->when(! auth()->user()->hasRole('super_admin'), fn (Builder $users) => $users->whereIn('users.id', app(MonitoringService::class)->groups(auth()->user())->select('murabbi_id'))))->searchable()->preload(),
-            Select::make('mudabbirs')->relationship('mudabbirs', 'name', fn (Builder $query) => $query->where('role', 'mudabbir')
+            Select::make('mudabbirs')->relationship('mudabbirs', 'name', fn (Builder $query) => $query->whereIn('role', ['mudabbir', 'ketua_mudabbir'])
                 ->when(! auth()->user()->hasRole('super_admin'), fn (Builder $users) => $users->whereHas('managedGroups', fn (Builder $groups) => $groups->whereIn('groups.id', app(MonitoringService::class)->groups(auth()->user())->select('groups.id')))))->multiple()->searchable()->preload(),
         ]);
     }

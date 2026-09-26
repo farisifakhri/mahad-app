@@ -17,7 +17,7 @@ class GroupRepository
         if ($user->hasRole('murabbi')) {
             return $query->where('murabbi_id', $user->id);
         }
-        if ($user->hasRole('mudabbir')) {
+        if ($user->hasAnyRole(['mudabbir', 'ketua_mudabbir'])) {
             return $query->whereHas('mudabbirs', fn (Builder $users) => $users->where('users.id', $user->id));
         }
 
