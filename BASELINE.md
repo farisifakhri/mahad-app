@@ -18,7 +18,7 @@ Untuk upgrade database baseline yang sudah berisi akun:
 ```powershell
 php artisan migrate
 php artisan db:seed --class=RolePermissionSeeder
-php artisan sipma:promote-demo-leader # khusus demo lokal; opsional di instalasi lain
+php artisan db:seed --class=DemoIdentitySeeder # akun demo dan identitas terbaru
 npm run build
 ```
 
@@ -29,12 +29,20 @@ dari aplikasi lain. Login bersama /login; /admin/login mengarah ke login ini.
 Guard seluruh UI tetap web. Akun eksternal tidak memperoleh panel Filament.
 
 ## Keputusan operasional pengguna
+- Pengasuh adalah role tersendiri: memantau seluruh kelompok, perkembangan,
+  absensi dan laporan tanpa mengubah data operasional.
+- Murabbi berada di atas mudabbir: memantau kelompok binaan dan performa
+  mudabbir/mahasantri, melihat laporan, serta mereview koreksi mudabbir.
+  Murabbi tidak membuka sesi, mengisi absensi atau memfinalkan laporan.
+- Mudabbir membagi seluruh mahasantri dalam mabna tugas melalui
+  Pembagian Kelompok. Akses absensi tetap terbatas kelompok tugas masing-masing.
+  Pemindahan dicatat dalam audit; roster, absensi dan snapshot lama tetap utuh.
 - Pekan Minggu–Sabtu, Asia/Jakarta.
 - Perubahan biasa dikunci **Sabtu pukul 23:59:00 WIB**; 23:58:59 masih terbuka
   bila kegiatan sudah selesai. Perhitungan terpusat dalam WeeklyCalendar.
 - Finalisasi mulai Minggu 00:00 WIB; semua anggota roster harus diisi.
   Belum diisi tidak dianggap ALFA.
-- Koreksi setelah final diajukan ketua kelompok dengan alasan dan versi absensi.
+- Koreksi setelah final diajukan mudabbir kelompok dengan alasan dan versi absensi.
   Hanya murabbi yang ditugaskan pada kelompok tersebut boleh mereview.
   Persetujuan menerbitkan snapshot versi baru; laporan sebelumnya tetap utuh.
   Penolakan tidak mengubah absensi atau laporan.
@@ -53,10 +61,11 @@ Password demo: Sipma123! (development saja).
 
 | Role | Email |
 |---|---|
-| Super Admin | admin@sipma.test |
+| Super Admin — Fakhri | admin@sipma.test |
+| Pengasuh — Ustad Fasjud | pengasuh@sipma.test |
 | Murabbi — Muhammad Ara'af, S.Ag | murabbi@sipma.test |
 | Murabbi — Syahrul Ramdhani, S.Ag | murabbi2@sipma.test |
-| Ketua Mudabbir — Riyan Hidayat | mudabbir1@sipma.test |
+| Mudabbir — Riyan Hidayat | mudabbir1@sipma.test |
 | Mudabbir — Syarif Hidayatullah | mudabbir2@sipma.test |
 | Mudabbir — Dandi Muchammad Mudzakir | mudabbir3@sipma.test |
 | Mudabbir — Muhammad Haqi An-Nazili | mudabbir4@sipma.test |
@@ -65,7 +74,7 @@ Password demo: Sipma123! (development saja).
 | Mahasantri | mahasantri1@sipma.test |
 | Orang Tua | orangtua1@sipma.test |
 
-Seeder membuat 123 akun, 5 kelompok, 100 mahasantri, dan 10 wali.
+Seeder membuat 124 akun, 5 kelompok, 100 mahasantri, dan 10 wali.
 Ada dua murabbi. Akun murabbi pertama mempertahankan penugasan baseline;
 murabbi kedua belum mendapat penugasan kelompok sampai pembagiannya dikonfirmasi.
 Mudabbir 7–10 memakai label belum dikonfirmasi. Nama dummy mahasantri tidak
@@ -79,17 +88,22 @@ php artisan db:seed --class=DemoIdentitySeeder
 Password akun baru demo tetap Sipma123!; pembaruan nama tidak mereset password
 akun yang sudah ada. Nama ini merupakan data yang diberikan pengguna; email
 @sipma.test tetap alamat demo lokal, bukan email personal yang telah dikonfirmasi.
-Mudabbir pertama dipromosikan, bukan ditambah. Seeder dapat diulang tanpa
-mereset password/profil lama. Promosi pada database lama memakai command demo
-atau perubahan role lewat admin. Satu role enum users.role disinkronkan ke
+Role ketua lama digabung ke Mudabbir tanpa mengubah penugasan. Seeder dapat diulang tanpa
+mereset password/profil lama. Perubahan peran berikutnya memakai panel admin.
+Satu role enum users.role disinkronkan ke
 Spatie oleh UserObserver; hak kelompok tetap memerlukan penugasan/pivot.
 
 ## Alur dan layar
 - /admin: dashboard kelompok tugas, sesi hari ini, kelengkapan pekan, laporan terbit.
-- /admin/operational-sessions: buka sesi oleh murabbi/ketua; filter tanggal,
-  kelompok/kegiatan; absensi massal oleh mudabbir/ketua setelah kegiatan selesai.
+- /admin/operational-sessions: buka sesi oleh mudabbir; filter tanggal,
+  kelompok/kegiatan; absensi massal oleh mudabbir setelah kegiatan selesai.
+  Tanggal otomatis hari ini; kelompok otomatis dipilih bila hanya satu tugas.
+  Nomor sesi otomatis bertambah, jam dapat diubah melalui pengaturan lipat.
+- /admin/group-assignments: buat kelompok dan pindahkan mahasantri dalam mabna
+  tugas oleh mudabbir/admin. Kelompok baru mewarisi mabna dan murabbi
+  dari kelompok acuan. Mudabbir pembuat mendapat penugasan kelompok baru.
 - /admin/weekly-reports: finalisasi, versi snapshot, pengajuan/review koreksi.
-- /admin/submission-reviews: verifikasi izin/sakit oleh mudabbir/ketua/admin.
+- /admin/submission-reviews: verifikasi izin/sakit oleh mudabbir/admin.
 - /admin/violations: input/ubah pelanggaran dan foto privat; arsip hanya admin.
 - Master User, Kelompok, Mahasantri, Orang Tua, Kegiatan, Kategori Pelanggaran
   dikelola admin; resource baca mengikuti role dan kelompok tugas.
@@ -159,8 +173,9 @@ phpunit.xml memakai SQLite memory. phpunit.mysql.xml memaksa database
 sipma_testing, memakai kredensial koneksi dari environment; RefreshDatabase
 hanya menghapus tabel database khusus pengujian tersebut. Jangan menjalankan
 suite MySQL saat server visual sedang memakai database yang sama.
-Hasil terakhir: 56 tes / 360 assertion lulus pada SQLite dan MySQL.
-Build Vite berhasil. Upgrade lokal mempertahankan 122 user dan 100 Student.
+Hasil terbaru: 62 tes / 523 assertion pada SQLite dan MySQL.
+Build Vite dan Pint berhasil. Database lokal memiliki 124 akun dan 100 Student;
+penambahan pengasuh serta pembaruan identitas mempertahankan data dan password lama.
 Pemeriksaan browser dan sumber aset dirinci dalam docs/DESAIN_DAN_VERIFIKASI.md.
 
 Ekspor PDF/Excel, notifikasi, keputusan libur otomatis, suspend akun,

@@ -21,7 +21,7 @@ class OpenActivitySession
             'group_id' => ['required', 'uuid', 'exists:groups,id'], 'activity_id' => ['required', 'integer', 'exists:activities,id'],
             'date' => ['required', 'date_format:Y-m-d'], 'starts_at' => ['required', 'date_format:H:i'],
             'ends_at' => ['required', 'date_format:H:i', 'after:starts_at'],
-            'occurrence' => ['required', 'integer', 'min:1', 'max:100'],
+            'occurrence' => ['nullable', 'integer', 'min:1', 'max:100'],
         ])->validate();
         $group = Group::findOrFail($data['group_id']);
         Gate::forUser($actor)->authorize('create', [ActivitySession::class, $group]);
@@ -30,6 +30,10 @@ class OpenActivitySession
             // Serialize group/session creation, preserving same-day occurrences.
             $group = Group::whereKey($group->id)->lockForUpdate()->firstOrFail();
             Gate::forUser($actor)->authorize('create', [ActivitySession::class, $group]);
+            $data['occurrence'] ??= (int) ActivitySession::where('group_id', $group->id)->where('activity_id', $data['activity_id'])->whereDate('date', $data['date'])->max('occurrence') + 1;
+            if ($data['occurrence'] > 100) {
+                throw ValidationException::withMessages(['activity_id' => 'Jumlah sesi kegiatan hari ini sudah mencapai batas.']);
+            }
             if (! Activity::whereKey($data['activity_id'])->where('is_active', true)->exists()) {
                 throw ValidationException::withMessages(['activity_id' => 'Kegiatan tidak aktif.']);
             }

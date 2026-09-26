@@ -13,10 +13,10 @@ class StudentRepository
     public function visibleTo(User $user): Builder
     {
         $query = Student::query();
-        if ($user->hasRole('super_admin')) {
+        if ($user->hasAnyRole(['super_admin', 'pengasuh'])) {
             return $query;
         }
-        if ($user->hasAnyRole(['murabbi', 'mudabbir', 'ketua_mudabbir'])) {
+        if ($user->hasAnyRole(['murabbi', 'mudabbir'])) {
             return $query->whereIn('group_id', $this->groups->visibleTo($user)->select('groups.id'));
         }
         if ($user->hasRole('mahasantri')) {

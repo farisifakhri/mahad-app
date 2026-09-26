@@ -16,7 +16,7 @@ abstract class InternalResource extends Resource
     {
         $user = auth()->user();
 
-        return $user instanceof User && $user->hasAnyRole(['super_admin', 'murabbi', 'mudabbir', 'ketua_mudabbir'])
+        return $user instanceof User && $user->hasAnyRole(['super_admin', 'pengasuh', 'murabbi', 'mudabbir'])
             && $user->can(static::$viewPermission);
     }
 

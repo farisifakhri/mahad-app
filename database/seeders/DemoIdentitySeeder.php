@@ -14,6 +14,8 @@ class DemoIdentitySeeder extends Seeder
     {
         DB::transaction(function () {
             $names = [
+                'admin@sipma.test' => ['Fakhri', UserRoleEnum::SUPER_ADMIN],
+                'pengasuh@sipma.test' => ['Ustad Fasjud', UserRoleEnum::PENGASUH],
                 'murabbi@sipma.test' => ["Muhammad Ara'af, S.Ag", UserRoleEnum::MURABBI],
                 'murabbi2@sipma.test' => ['Syahrul Ramdhani, S.Ag', UserRoleEnum::MURABBI],
             ];
@@ -24,7 +26,7 @@ class DemoIdentitySeeder extends Seeder
             for ($number = 1; $number <= 10; $number++) {
                 $names['mudabbir'.$number.'@sipma.test'] = [
                     $mudabbirs[$number - 1] ?? 'Mudabbir '.$number.' (belum dikonfirmasi)',
-                    $number === 1 ? UserRoleEnum::KETUA_MUDABBIR : UserRoleEnum::MUDABBIR,
+                    UserRoleEnum::MUDABBIR,
                 ];
             }
             foreach ($names as $email => [$name, $role]) {

@@ -35,7 +35,7 @@ class SipmaSeeder extends Seeder
 
             for ($i = 1; $i <= 2; $i++) {
                 $number = ($groupNumber - 1) * 2 + $i;
-                $mudabbir = $createUser('Mudabbir '.$number, 'mudabbir'.$number.'@sipma.test', $number === 1 ? UserRoleEnum::KETUA_MUDABBIR : UserRoleEnum::MUDABBIR);
+                $mudabbir = $createUser('Mudabbir '.$number, 'mudabbir'.$number.'@sipma.test', UserRoleEnum::MUDABBIR);
                 $group->mudabbirs()->syncWithoutDetaching([$mudabbir->id]);
             }
 

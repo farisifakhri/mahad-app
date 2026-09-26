@@ -29,8 +29,6 @@ class OperationalSessions extends Page
 
     public string $endsAt = '19:00';
 
-    public int $occurrence = 1;
-
     #[Locked]
     public ?int $selectedSessionId = null;
 
@@ -50,6 +48,10 @@ class OperationalSessions extends Page
     public function mount(): void
     {
         $this->date = now()->toDateString();
+        $groups = app(MonitoringService::class)->groups(auth()->user())->get();
+        if ($groups->count() === 1) {
+            $this->groupId = $groups->first()->id;
+        }
         if (request()->filled('session')) {
             $this->selectSession((int) request('session'));
         }
@@ -57,7 +59,7 @@ class OperationalSessions extends Page
 
     public function openSession(): void
     {
-        $session = app(OpenActivitySession::class)->execute(auth()->user(), ['group_id' => $this->groupId, 'activity_id' => $this->activityId, 'date' => $this->date, 'starts_at' => $this->startsAt, 'ends_at' => $this->endsAt, 'occurrence' => $this->occurrence]);
+        $session = app(OpenActivitySession::class)->execute(auth()->user(), ['group_id' => $this->groupId, 'activity_id' => $this->activityId, 'date' => $this->date, 'starts_at' => $this->startsAt, 'ends_at' => $this->endsAt]);
         $this->selectSession($session->id);
         Notification::make()->title('Sesi dibuka')->success()->send();
     }

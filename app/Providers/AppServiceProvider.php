@@ -15,6 +15,7 @@ use App\Policies\AbsenceSubmissionPolicy;
 use App\Policies\ActivitySessionPolicy;
 use App\Policies\AttendanceCorrectionPolicy;
 use App\Policies\AttendancePolicy;
+use App\Policies\GroupOrganizationPolicy;
 use App\Policies\ParentPolicy;
 use App\Policies\ViolationPolicy;
 use App\Policies\WeeklyPeriodPolicy;
@@ -37,6 +38,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         User::observe(UserObserver::class);
+        Gate::define('organizeGroup', [GroupOrganizationPolicy::class, 'organize']);
+        Gate::define('assignStudentGroup', [GroupOrganizationPolicy::class, 'assign']);
         Gate::policy(ActivitySession::class, ActivitySessionPolicy::class);
         Gate::policy(WeeklyPeriod::class, WeeklyPeriodPolicy::class);
         Gate::policy(AttendanceCorrection::class, AttendanceCorrectionPolicy::class);

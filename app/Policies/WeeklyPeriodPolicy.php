@@ -16,6 +16,6 @@ class WeeklyPeriodPolicy
 
     public function finalize(User $user, WeeklyPeriod $period): bool
     {
-        return $this->view($user, $period) && $user->can('reports.finalize') && $period->finalized_at === null && app(WeeklyCalendar::class)->canFinalize($period->starts_on);
+        return $user->hasAnyRole(['super_admin', 'mudabbir']) && $this->view($user, $period) && $user->can('reports.finalize') && $period->finalized_at === null && app(WeeklyCalendar::class)->canFinalize($period->starts_on);
     }
 }

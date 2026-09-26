@@ -12,7 +12,7 @@ class ViolationPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['super_admin', 'murabbi', 'mudabbir', 'ketua_mudabbir', 'mahasantri', 'orang_tua']);
+        return $user->hasAnyRole(['super_admin', 'pengasuh', 'murabbi', 'mudabbir', 'mahasantri', 'orang_tua']);
     }
 
     public function view(User $user, Violation $record): bool
@@ -27,14 +27,14 @@ class ViolationPolicy
             return true;
         }
 
-        return $student !== null && $user->hasAnyRole(['mudabbir', 'ketua_mudabbir']) && $user->can('violations.record')
+        return $student !== null && $user->hasAnyRole(['mudabbir']) && $user->can('violations.record')
             && app(GroupRepository::class)->canAccess($user, $student->group_id);
     }
 
     public function update(User $user, Violation $record): bool
     {
         return $this->view($user, $record) && ($user->hasRole('super_admin')
-            || ($user->hasAnyRole(['mudabbir', 'ketua_mudabbir']) && $user->can('violations.record')));
+            || ($user->hasAnyRole(['mudabbir']) && $user->can('violations.record')));
     }
 
     public function delete(User $user, Violation $record): bool

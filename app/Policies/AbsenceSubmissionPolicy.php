@@ -13,12 +13,12 @@ class AbsenceSubmissionPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['super_admin', 'mudabbir', 'ketua_mudabbir', 'mahasantri']);
+        return $user->hasAnyRole(['super_admin', 'mudabbir', 'mahasantri']);
     }
 
     public function view(User $user, AbsenceSubmission $submission): bool
     {
-        if ($user->hasAnyRole(['super_admin', 'mudabbir', 'ketua_mudabbir'])) {
+        if ($user->hasAnyRole(['super_admin', 'mudabbir'])) {
             return app(GroupRepository::class)->canAccess($user, $submission->activitySession->group_id);
         }
 
@@ -36,7 +36,7 @@ class AbsenceSubmissionPolicy
             return false;
         }
 
-        return $user->hasRole('super_admin') || ($user->hasAnyRole(['mudabbir', 'ketua_mudabbir'])
+        return $user->hasRole('super_admin') || ($user->hasAnyRole(['mudabbir'])
             && $user->can('submissions.review') && app(GroupRepository::class)->canAccess($user, $submission->activitySession->group_id));
     }
 

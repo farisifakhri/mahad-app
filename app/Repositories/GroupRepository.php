@@ -11,13 +11,13 @@ class GroupRepository
     public function visibleTo(User $user): Builder
     {
         $query = Group::query();
-        if ($user->hasRole('super_admin')) {
+        if ($user->hasAnyRole(['super_admin', 'pengasuh'])) {
             return $query;
         }
         if ($user->hasRole('murabbi')) {
             return $query->where('murabbi_id', $user->id);
         }
-        if ($user->hasAnyRole(['mudabbir', 'ketua_mudabbir'])) {
+        if ($user->hasAnyRole(['mudabbir'])) {
             return $query->whereHas('mudabbirs', fn (Builder $users) => $users->where('users.id', $user->id));
         }
 

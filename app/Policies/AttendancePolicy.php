@@ -16,12 +16,12 @@ class AttendancePolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['super_admin', 'murabbi', 'mudabbir', 'ketua_mudabbir', 'mahasantri', 'orang_tua']);
+        return $user->hasAnyRole(['super_admin', 'pengasuh', 'murabbi', 'mudabbir', 'mahasantri', 'orang_tua']);
     }
 
     public function view(User $user, Attendance $record): bool
     {
-        if ($user->hasAnyRole(['super_admin', 'murabbi', 'mudabbir', 'ketua_mudabbir'])) {
+        if ($user->hasAnyRole(['super_admin', 'pengasuh', 'murabbi', 'mudabbir'])) {
             return app(GroupRepository::class)->canAccess($user, $record->activitySession->group_id);
         }
 
@@ -43,7 +43,7 @@ class AttendancePolicy
 
     public function correct(User $user, Attendance $record): bool
     {
-        return $user->hasRole('ketua_mudabbir') && $user->can('attendances.correct')
+        return $user->hasRole('mudabbir') && $user->can('attendances.correct')
             && app(GroupRepository::class)->canAccess($user, $record->activitySession->group_id)
             && WeeklyPeriod::where('group_id', $record->activitySession->group_id)
                 ->whereDate('starts_on', app(WeeklyCalendar::class)->start($record->activitySession->date))

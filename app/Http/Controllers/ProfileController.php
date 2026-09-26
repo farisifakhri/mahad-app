@@ -52,7 +52,7 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        if ($user->hasAnyRole(['super_admin', 'murabbi', 'mudabbir', 'ketua_mudabbir'])
+        if ($user->hasAnyRole(['super_admin', 'pengasuh', 'murabbi', 'mudabbir'])
             || $user->student()->withTrashed()->exists() || $user->parentProfile()->exists()
             || $user->recordedAttendances()->exists() || $user->recordedViolations()->withTrashed()->exists()
             || $user->reviewedSubmissions()->exists()

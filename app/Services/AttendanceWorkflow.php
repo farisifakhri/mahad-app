@@ -34,7 +34,7 @@ class AttendanceWorkflow
 
     public function canRecord(User $user, ActivitySession $session): bool
     {
-        return $user->hasAnyRole(['mudabbir', 'ketua_mudabbir']) && $user->can('attendances.record')
+        return $user->hasAnyRole(['mudabbir']) && $user->can('attendances.record')
             && $this->groups->canAccess($user, $session->group_id) && $this->ordinaryWindow($session);
     }
 

@@ -1,17 +1,18 @@
 <x-filament-panels::page>
 @include('filament.pages.operational-style')
 <div class="sipma-notice">Pekan Minggu–Sabtu · Absensi biasa dikunci setiap Sabtu pukul <strong>23.59 WIB</strong>.</div>
-@if(auth()->user()->can('sessions.open'))
+@if(auth()->user()->hasRole('mudabbir') && auth()->user()->can('sessions.open'))
 <form wire:submit="openSession" class="sipma-card">
 <h2>Buka sesi kegiatan</h2>
 <div class="sipma-grid">
 <label>Kelompok<select wire:model="groupId" required><option value="">Pilih kelompok</option>@foreach($groups as $group)<option value="{{ $group->id }}">{{ $group->name }}</option>@endforeach</select></label>
 <label>Kegiatan<select wire:model="activityId" required><option value="">Pilih kegiatan</option>@foreach($activities as $activity)<option value="{{ $activity->id }}">{{ $activity->name }}</option>@endforeach</select></label>
 <label>Tanggal<input type="date" wire:model="date" required></label>
-<label>Mulai (WIB)<input type="time" wire:model="startsAt" required></label>
-<label>Selesai (WIB)<input type="time" wire:model="endsAt" required></label>
-<label>Urutan kegiatan hari ini<input type="number" min="1" max="100" wire:model="occurrence" required></label>
-</div><button type="submit" wire:loading.attr="disabled">Buka sesi</button>
+</div>
+<details style="margin:16px 0"><summary>Ubah jam kegiatan · {{ $startsAt }}–{{ $endsAt }} WIB</summary><div class="sipma-grid" style="margin-top:12px">
+<label>Mulai (WIB)<input type="time" wire:model.live="startsAt" required></label>
+<label>Selesai (WIB)<input type="time" wire:model.live="endsAt" required></label>
+</div></details><p class="sipma-muted">Tanggal hari ini sudah terisi. Nomor sesi diatur otomatis, termasuk jika kegiatan diadakan lagi pada hari yang sama.</p><button type="submit" wire:loading.attr="disabled">Buka sesi & isi absensi</button>
 </form>
 @endif
 <div class="sipma-card sipma-session-list">
@@ -19,7 +20,7 @@
 <div class="sipma-grid"><label>Kelompok<select wire:model.live="filterGroup"><option value="">Semua kelompok tugas</option>@foreach($groups as $group)<option value="{{ $group->id }}">{{ $group->name }}</option>@endforeach</select></label><label>Kegiatan<select wire:model.live="filterActivity"><option value="">Semua kegiatan</option>@foreach($activities as $activity)<option value="{{ $activity->id }}">{{ $activity->name }}</option>@endforeach</select></label><label>Tanggal<input aria-label="Filter tanggal sesi" type="date" wire:model.live="filterDate"></label></div>
 @forelse($sessions as $item)
 <button type="button" wire:click="selectSession({{ $item->id }})"><span>{{ $item->activity->name }} #{{ $item->occurrence }}<small style="display:block;font-weight:400;margin-top:5px">{{ $item->date->format('d/m/Y') }} · {{ $item->group->name }} · {{ $item->starts_at }}–{{ $item->ends_at }} WIB</small></span><x-status-badge :status="$item->status"/></button>
-@empty<div class="sipma-empty"><strong>Belum ada sesi</strong>Ubah filter atau tunggu murabbi/ketua membuka kegiatan.</div>@endforelse
+@empty<div class="sipma-empty"><strong>Belum ada sesi</strong>Ubah filter atau tunggu mudabbir membuka kegiatan.</div>@endforelse
 </div>
 @if($session)
 <form wire:submit="saveAttendance" class="sipma-card" x-data="{ dirty: false }" @change="dirty = true" @attendance-saved.window="dirty = false">

@@ -7,9 +7,9 @@ use Filament\Support\Contracts\HasLabel;
 enum UserRoleEnum: string implements HasLabel
 {
     case SUPER_ADMIN = 'super_admin';
+    case PENGASUH = 'pengasuh';
     case MURABBI = 'murabbi';
     case MUDABBIR = 'mudabbir';
-    case KETUA_MUDABBIR = 'ketua_mudabbir';
     case MAHASANTRI = 'mahasantri';
     case ORANG_TUA = 'orang_tua';
 
@@ -17,9 +17,9 @@ enum UserRoleEnum: string implements HasLabel
     {
         return match ($this) {
             self::SUPER_ADMIN => 'Super Admin',
+            self::PENGASUH => 'Pengasuh',
             self::MURABBI => 'Murabbi',
             self::MUDABBIR => 'Mudabbir',
-            self::KETUA_MUDABBIR => 'Ketua Mudabbir',
             self::MAHASANTRI => 'Mahasantri',
             self::ORANG_TUA => 'Orang Tua',
         };

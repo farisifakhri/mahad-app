@@ -21,12 +21,12 @@ class ActivitySessionPolicy
 
     public function create(User $user, ?Group $group = null): bool
     {
-        return $group !== null && $user->hasAnyRole(['murabbi', 'ketua_mudabbir']) && $user->can('sessions.open') && app(GroupRepository::class)->canAccess($user, $group->id);
+        return $group !== null && $user->hasRole('mudabbir') && $user->can('sessions.open') && app(GroupRepository::class)->canAccess($user, $group->id);
     }
 
     public function record(User $user, ActivitySession $session): bool
     {
-        return $user->hasAnyRole(['mudabbir', 'ketua_mudabbir']) && $user->can('attendances.record')
+        return $user->hasAnyRole(['mudabbir']) && $user->can('attendances.record')
             && app(GroupRepository::class)->canAccess($user, $session->group_id);
     }
 

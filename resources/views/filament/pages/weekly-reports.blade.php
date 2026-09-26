@@ -1,7 +1,7 @@
 <x-filament-panels::page>
 @include('filament.pages.operational-style')
-<div class="sipma-notice">Laporan pekan Minggu–Sabtu dapat difinalkan mulai <strong>Minggu</strong>. Koreksi ketua menunggu review murabbi.</div>
-@if(auth()->user()->can('reports.finalize'))
+<div class="sipma-notice">Laporan pekan Minggu–Sabtu dapat difinalkan mulai <strong>Minggu</strong>. Koreksi mudabbir menunggu review murabbi.</div>
+@if(auth()->user()->hasAnyRole(['super_admin', 'mudabbir']) && auth()->user()->can('reports.finalize'))
 <form wire:submit="finalize" class="sipma-card"><h2>Finalisasi laporan</h2><div class="sipma-grid">
 <label>Kelompok<select wire:model="groupId" required><option value="">Pilih kelompok</option>@foreach($groups as $group)<option value="{{ $group->id }}">{{ $group->name }}</option>@endforeach</select></label>
 <label>Tanggal dalam pekan laporan<input type="date" wire:model="periodDate" required></label>
