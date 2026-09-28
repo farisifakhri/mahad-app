@@ -1,40 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') — SIPMA</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-slate-50 text-slate-900 antialiased">
-    <div class="mx-auto min-h-screen max-w-lg" x-data="{ menuOpen: false }">
-        <header class="border-b bg-white px-5 py-4">
-            <div class="flex items-center justify-between">
-                <a href="{{ route('dashboard') }}" class="text-xl font-bold text-emerald-800">SIPMA</a>
-                <button type="button" @click="menuOpen = !menuOpen" :aria-expanded="menuOpen" aria-controls="portal-menu" class="rounded-lg border px-3 py-2">Menu</button>
-            </div>
-            <p class="mt-1 text-sm text-slate-600">Mabna Syekh Nawawi</p>
-            <nav id="portal-menu" x-show="menuOpen" x-cloak class="mt-4 space-y-3" aria-label="Navigasi portal">
-                @role('mahasantri')
-                    <a class="block" href="{{ route('portal.absensi') }}">Riwayat absensi</a>
-                    <a class="block" href="{{ route('portal.pengajuan') }}">Pengajuan izin / sakit</a>
-                @endrole
-                @role('orang_tua')
-                    <a class="block" href="{{ route('portal.anak') }}">Perkembangan anak</a>
-                @endrole
-                <a class="block" href="{{ route('profile.edit') }}">Profil</a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="rounded-lg bg-slate-800 px-4 py-2 text-white" type="submit">Keluar</button>
-                </form>
-            </nav>
-        </header>
-        <main class="p-5">
-            <p class="mb-2 text-sm text-slate-500">{{ auth()->user()->name }}</p>
-            <h1 class="mb-5 text-2xl font-bold">@yield('title')</h1>
-            @yield('content')
-        </main>
-    </div>
-</body>
-</html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>@yield('title') — SIPMA</title><link rel="icon" href="{{ asset('brand/favicon.svg') }}">@vite(['resources/css/app.css','resources/js/app.js'])<link rel="stylesheet" href="{{ asset('css/sipma.css') }}"></head>
+<body x-data="{ menuOpen: false }"><a href="#portal-content" class="sr-only focus:not-sr-only">Langsung ke konten</a>
+<header class="sipma-portal-header"><div class="sipma-portal-bar"><a class="sipma-brand" href="{{ route('dashboard') }}"><img src="{{ asset('brand/sipma.svg') }}" alt="SIPMA"><span class="sipma-muted hidden sm:block">Mabna Syekh Nawawi</span></a><div class="sipma-portal-user text-right"><strong class="text-sm">{{ auth()->user()->name }}</strong><p class="sipma-kicker mt-1">{{ auth()->user()->role->getLabel() }}</p></div><button type="button" class="sipma-button sipma-secondary sipma-mobile-menu" @click="menuOpen = !menuOpen" :aria-expanded="menuOpen" aria-controls="portal-menu">Menu</button></div>
+<nav id="portal-menu" class="sipma-portal-nav" :class="{ 'hidden sm:flex': !menuOpen }" aria-label="Navigasi portal">
+@role('mahasantri')<a href="{{ route('portal.absensi') }}" @class(['active'=>request()->routeIs('portal.absensi')])>Absensi saya</a><a href="{{ route('portal.pengajuan') }}" @class(['active'=>request()->routeIs('portal.pengajuan')])>Izin & sakit</a><a href="{{ route('portal.pelanggaran') }}" @class(['active'=>request()->routeIs('portal.pelanggaran')])>Pelanggaran</a>@endrole
+@role('orang_tua')<a href="{{ route('portal.anak') }}" @class(['active'=>request()->routeIs('portal.anak')])>Perkembangan anak</a>@endrole
+<a href="{{ route('portal.laporan') }}" @class(['active'=>request()->routeIs('portal.laporan')])>Laporan mingguan</a><a href="{{ route('profile.edit') }}">Profil</a><form method="POST" action="{{ route('logout') }}">@csrf<button class="sipma-button sipma-secondary" type="submit">Keluar</button></form></nav></header>
+<main id="portal-content" class="sipma-portal-main"><p class="sipma-kicker">{{ auth()->user()->role->getLabel() }} · Portal pembinaan</p><h1>@yield('title')</h1>@yield('content')</main><footer class="sipma-portal-footer">SIPMA · Ma’had Al-Jami’ah UIN Syarif Hidayatullah Jakarta</footer></body></html>

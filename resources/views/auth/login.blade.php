@@ -1,47 +1,14 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>Masuk — SIPMA</title><link rel="icon" href="{{ asset('brand/favicon.svg') }}" type="image/svg+xml">@vite(['resources/css/app.css','resources/js/app.js'])<link rel="stylesheet" href="{{ asset('css/sipma.css') }}"></head>
+<body class="sipma-login-page"><main class="sipma-login-shell" aria-labelledby="login-title">
+<section class="sipma-login-visual" aria-label="Ilustrasi kehidupan mabna"><img src="{{ asset('brand/mabna-dawn.svg') }}" alt="Ilustrasi orisinal fasad mabna dalam cahaya pagi"><span class="sipma-visual-label">MA’HAD AL-JAMI’AH UIN JAKARTA</span><div class="sipma-visual-copy"><span class="sipma-kicker">MABNA SYEKH NAWAWI</span><h2>Bertumbuh bersama.<br>Terjaga dalam pembinaan.</h2><p>Satu ruang untuk mendampingi kegiatan, kehadiran, dan perkembangan mahasantri setiap pekan.</p></div></section>
+<section class="sipma-login-form"><div class="sipma-login-logos"><img class="uin-logo" src="{{ asset('brand/uin-jakarta-official.png') }}" alt="Lambang resmi UIN Syarif Hidayatullah Jakarta"><span class="sipma-logo-divider" aria-hidden="true"></span><img class="sipma-logo" src="{{ asset('brand/sipma.svg') }}" alt="SIPMA"></div>
+<p class="sipma-kicker">SISTEM INFORMASI PEMBINAAN MAHASANTRI</p><h1 id="login-title">Selamat datang di SIPMA</h1><p class="sipma-muted">Masuk untuk melanjutkan pembinaan dan melihat perkembangan mahasantri.</p>
+@if(session('status'))<p class="sipma-notice mt-5" role="status">{{ session('status') }}</p>@endif
+@if($errors->any())<div class="sipma-alert mt-5" role="alert"><strong>Masuk belum berhasil.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
+<form method="POST" action="{{ route('login') }}" x-data="{ show: false, submitting: false }" @submit="submitting = true" :aria-busy="submitting">@csrf
+<label class="sipma-field" for="email">Alamat email<input class="sipma-input" id="email" type="email" name="email" value="{{ old('email') }}" placeholder="nama@email.com" required autofocus autocomplete="username" @if($errors->has('email')) aria-invalid="true" @endif></label>
+<label class="sipma-field" for="password">Kata sandi</label><div class="sipma-password"><input class="sipma-input" id="password" type="password" :type="show ? 'text' : 'password'" name="password" placeholder="Masukkan kata sandi" required autocomplete="current-password"><button type="button" @click="show = !show" :aria-pressed="show" :aria-label="show ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" x-text="show ? 'Sembunyikan' : 'Lihat'">Lihat</button></div>
+<div class="sipma-login-options"><label for="remember"><input id="remember" type="checkbox" name="remember"> Ingat saya</label>@if(Route::has('password.request'))<a href="{{ route('password.request') }}">Lupa kata sandi?</a>@endif</div>
+<button type="submit" class="sipma-button sipma-login-submit" :disabled="submitting"><span x-show="!submitting">Masuk ke SIPMA &nbsp; →</span><span x-cloak x-show="submitting" role="status">Memeriksa akun…</span></button></form>
+<p class="sipma-login-note">Akun dibuat admin mabna. Belum terhubung ke profil/kelompok? Hubungi pengelola.</p><footer><div class="sipma-affiliations"><img src="{{ asset('brand/mahad-al-jamiah.jpg') }}" alt="Ma’had Al-Jami’ah UIN Jakarta"><img src="{{ asset('brand/mabna-syekh-nawawi.jpg') }}" alt="Mabna Syekh Nawawi"></div><span>Mabna Syekh Nawawi · Ma’had Al-Jami’ah<br>UIN Syarif Hidayatullah Jakarta</span></footer></section></main></body></html>

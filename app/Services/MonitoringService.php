@@ -26,12 +26,20 @@ class MonitoringService
 
     public function attendances(User $user): Builder
     {
+        if ($user->hasAnyRole(['super_admin', 'pengasuh', 'murabbi', 'mudabbir'])) {
+            return Attendance::query()->whereHas('activitySession', fn (Builder $sessions) => $sessions->whereIn('group_id', $this->groups($user)->select('groups.id')))->with(['student.user', 'activitySession.activity']);
+        }
+
         return Attendance::query()->whereIn('student_id', $this->students($user)->select('students.id'))
             ->with(['student.user', 'activitySession.activity']);
     }
 
     public function submissions(User $user): Builder
     {
+        if ($user->hasAnyRole(['super_admin', 'mudabbir'])) {
+            return AbsenceSubmission::query()->whereHas('activitySession', fn (Builder $sessions) => $sessions->whereIn('group_id', $this->groups($user)->select('groups.id')))->with(['student.user', 'activitySession.activity']);
+        }
+
         return AbsenceSubmission::query()->whereIn('student_id', $this->students($user)->select('students.id'))
             ->with(['student.user', 'activitySession.activity']);
     }

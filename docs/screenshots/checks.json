@@ -1,0 +1,22 @@
+{
+  "base": "http://127.0.0.1:8002",
+  "pages": [
+    "login-desktop",
+    "login-error-desktop",
+    "dashboard-desktop",
+    "absensi-desktop",
+    "laporan-empty-desktop",
+    "portal-desktop",
+    "pengajuan-desktop",
+    "orang-tua-desktop",
+    "login-mobile",
+    "login-error-mobile",
+    "dashboard-mobile",
+    "absensi-mobile",
+    "laporan-empty-mobile",
+    "portal-mobile",
+    "pengajuan-mobile",
+    "orang-tua-mobile"
+  ],
+  "issues": []
+}
